@@ -10,3 +10,11 @@ _*
 /user/usys.S
 .gdbinit
 TAGS
+
+# Nhom bo sung
+*.dtb
+*.swp
+.vscode/
+.idea/
+.DS_Store
+qemu.log
