@@ -1,0 +1,7 @@
+# WEEK2 -SBI43\SBI44 - Phân tích Device Tree (DTB) QEMU virt machine - Vũ Đình Lực
+
+- **RAM Base Address:** `0x80000000`
+- **RAM Size:** `128 MB` (`0x8000000`)
+- **Số lượng CPU Cores:** 4 Harts (`cpu@0` đến `cpu@3`)
+- **Tần số Clock (timebase-frequency):** `10000000` Hz (10 MHz)
+- **Địa chỉ UART MMIO:** `0x10000000`
