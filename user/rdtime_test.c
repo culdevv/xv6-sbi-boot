@@ -21,7 +21,7 @@ main(void)
   uint64 milliseconds;
 
   printf("=== RISC-V rdtime test ===\n");
-printf("Expected timebase frequency: %llu Hz\n", TIMEBASE_FREQ);
+  printf("Expected timebase frequency: %llu Hz\n", TIMEBASE_FREQ);
   start = rdtime();
 
   // Wait until the counter increases by 10 million ticks.
@@ -38,10 +38,9 @@ printf("Expected timebase frequency: %llu Hz\n", TIMEBASE_FREQ);
   printf("Start rdtime: %ld\n", start);
   printf("End rdtime:   %ld\n", end);
   printf("Elapsed ticks: %ld\n", elapsed);
-  printf("Measured time: %ld.%ld seconds\n",
-         seconds, milliseconds);
+  printf("Measured time: %ld.%ld seconds\n", seconds, milliseconds);
 
-printf("Expected ticks for 1 second: %llu\n", TEST_TICKS);
+  printf("Expected ticks for 1 second: %llu\n", TEST_TICKS);
   if (elapsed >= TEST_TICKS)
     printf("RESULT: PASS - time counter increased as expected.\n");
   else
