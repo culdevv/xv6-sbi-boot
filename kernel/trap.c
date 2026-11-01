@@ -123,6 +123,8 @@ prepare_return(void)
 
   // set S Previous Privilege mode to User.
   unsigned long x = r_sstatus();
+  // Allow user mode to read the time counter using rdtime.
+  w_scounteren(r_scounteren() | 2);
   x &= ~SSTATUS_SPP; // clear SPP to 0 for user mode
   x |= SSTATUS_SPIE; // enable interrupts in user mode
   w_sstatus(x);
