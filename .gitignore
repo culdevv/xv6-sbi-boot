@@ -18,3 +18,4 @@ TAGS
 .idea/
 .DS_Store
 qemu.log
+test-results/
