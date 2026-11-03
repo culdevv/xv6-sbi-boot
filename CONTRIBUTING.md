@@ -47,7 +47,7 @@ experiments/
 └── tuan-x/ ...
 ### C. Thư mực kết quả test sửa đổi kernel (tests/)
 Plaintext
-experiments/
+tests/
 ├── tuan-1/
 │   ├── Luc/      (Các test cá nhân Tuần 1)
 │   ├── Nam/
