@@ -1,0 +1,10 @@
+### sbi_set_timer(stime_value)    hẹn ngắt đồng hồ tại một thời điểm tuyệt đối
+
+- Mục đích: Báo "hãy gây ngắt đồng hồ khi bộ đếm time đạt giá trị này"
+- Dùng cho: R3; gọi từ trap.c (mỗi lần xử lý ngắt đồng hồ) và lúc khởi động mỗi CPU
+- Gọi SBI: EID = 0x54494D45, FID = 0
+- Tham số:stime_value (a0, 64-bit): thời điểm tuyệt đối theo nhịp. Muốn hẹn "X nhịp nữa" thì truyền đọc_time_hiện_tại + X
+- Trả về: int: 0 thành công
+- Lỗi có thể gặp: hầu như không
+- Lưu ý: (1) Mỗi lần hẹn chỉ ngắt một lần; kernel phải hẹn lại sau mỗi ngắt, quên là đồng hồ chết. (2) Gọi hàm này cũng xóa ngắt đồng hồ đang chờ. Muốn tắt hẳn ngắt đồng hồ thì hẹn vào thời điểm vô cùng xa (~0). (3) Ngắt tới kernel ở dạng "ngắt đồng hồ mức S" (mã nguyên nhân 5); kernel phải bật nó trong thanh ghi sie. (4) Xv6 gốc dùng khoảng 1.000.000 nhịp (≈ 0,1 giây ở 10 MHz), hãy kiểm tra số thật trong trap.c của bản bạn dùng
+- Đã đo thực tế: sbi_set_timer(~0) trả 0. Chưa đo việc nhận ngắt (cần cấu hình ngắt, làm ở tuần 4)

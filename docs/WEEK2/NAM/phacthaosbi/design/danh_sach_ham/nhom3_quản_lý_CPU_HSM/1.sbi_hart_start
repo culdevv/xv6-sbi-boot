@@ -1,0 +1,11 @@
+### sbi_hart_start(hartid, start_addr, opaque) — đánh thức một CPU đang dừng
+
+- Mục đích: 
+- Dùng cho: 	R5; gọi từ main.c trên CPU chính, lặp qua các CPU khác
+- Gọi SBI: 	EID 0x48534D, FID 0
+- Tham số:hartid (a0): số CPU cần bật. start_addr (a1): địa chỉ vật lý nơi CPU đó bắt đầu chạy. opaque (a2): một số tùy ý kernel muốn gửi kèm
+- Trả về: int: 0 = đã nhận lệnh khởi động
+- Lỗi có thể gặp: 	-3 nếu hartid không tồn tại; -6 nếu CPU đó đã chạy rồi; -5 nếu địa chỉ không hợp lệ; -1 nếu thất bại chung
+- Lưu ý:	Đoạn mã tại start_addr phải viết bằng assembly: việc đầu tiên là tự đặt ngăn xếp từ a0, sau đó mới gọi code C
+- Đã đo thực tế: -smp 4: start(hart 1, ..., 0xABCD) trả 0; CPU phụ chạy và nhận a0 = 1, a1 = 0xabcd đúng như đặc tả. start(hart 99) → -3. start(hart 0 đang chạy) → -6. start(hart 1 lần hai) → -6. -smp 1, start(hart 1) → -3
+- Điều kiện CPU được bật: Bắt đầu ở mức S tại start_addr với phân trang tắt (địa chỉ = địa chỉ vật lý), ngắt tắt, chưa có ngăn xếp. Thanh ghi a0 = hartid của nó, a1 = giá trị opaque

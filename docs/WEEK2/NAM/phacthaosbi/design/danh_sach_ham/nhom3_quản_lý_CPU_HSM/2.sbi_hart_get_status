@@ -1,0 +1,10 @@
+### sbi_hart_get_status(hartid) — hỏi trạng thái một CPU
+
+- Mục đích: 
+- Dùng cho: 	R5 (kiểm tra CPU phụ đã lên chưa, tránh bật hai lần), R7 (xác nhận đủ CPU)
+- Gọi SBI: EID 0x48534D, FID 2
+- Tham số:hartid (a0)
+- Trả về: int: ≥ 0 là trạng thái, số âm là lỗi
+- Lỗi có thể gặp: 	-3 nếu hartid không tồn tại
+- Bảng trạng thái: 	0 = STARTED (đang chạy), 1 = STOPPED (đang dừng), 2 = START_PENDING (đang khởi động), 3 = STOP_PENDING, 4 = SUSPENDED, 5 = SUSPEND_PENDING, 6 = RESUME_PENDING
+- Đã đo thực tế: 	-smp 4: hart 0 → 0, hart 1 trước start → 1, sau start → 0. hart 99 → -3. -smp 1: hart 1 → -3
