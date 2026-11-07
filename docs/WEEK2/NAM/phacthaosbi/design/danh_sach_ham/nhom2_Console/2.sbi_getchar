@@ -1,0 +1,8 @@
+### sbi_getchar()     dịch vụ cũ
+
+- Mục đích: 
+- Gọi SBI: EID = 2
+- Tham số: không
+- Trả về: int: mã ký tự 0..255, hoặc -1 nếu chưa có phím nào
+- Lưu ý: Không gây ngắt; muốn nhận phím phải hỏi lặp lại (polling), ví dụ mỗi tick đồng hồ. 
+- Đã đo thực tế: Trả -1 khi không có phím

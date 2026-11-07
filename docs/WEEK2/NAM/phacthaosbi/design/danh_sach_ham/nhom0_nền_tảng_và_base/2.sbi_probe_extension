@@ -1,0 +1,9 @@
+### sbi_probe_extension(eid)   hỏi OpenSBI "có nhóm dịch vụ này không"
+
+- Dùng cho:  Lúc khởi động, quyết định dùng dịch vụ mới hay dự phòng cũ (bước 5)
+- Gọi SBI: EID = 0x10, FID = 3
+- Tham số: eid (a0): số hiệu nhóm cần hỏi
+- Trả về: long: 0 = không có, khác 0 (thực tế là 1) = có
+- Lỗi có thể gặp: Không lỗi trong thực tế
+- Đã đo thực tế: Trên máy thử: TIME=1, HSM=1, SRST=1, DBCN=1, EID bịa 0x12345678=0
+

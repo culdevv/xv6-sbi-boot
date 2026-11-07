@@ -1,0 +1,9 @@
+### sbi_shutdown() — tắt hẳn máy
+
+- Dùng cho: R6; gọi từ sys_halt trong sysproc.c, và có thể từ panic
+- Gọi SBI: EID 0x53525354, FID 0 (system_reset) với reset_type = 0 (tắt máy), reset_reason = 0 (bình thường)
+- Tham số:reset_type (a0): 0 = tắt, 1 = khởi động lạnh, 2 = khởi động ấm; reset_reason (a1): 0 = không, 1 = lỗi hệ thống
+- Trả về: Không trả về nếu thành công (QEMU thoát). Nếu có trở về nghĩa là lỗi
+- Lỗi có thể gặp: -3 nếu reset_type sai (đo: type=99 → -3); -2 nếu không hỗ trợ
+- Thiết kế: 	Hàm không có giá trị trả về (void, đánh dấu không bao giờ trả về). Bên trong: gọi SRST; nếu còn chạy tới dòng sau thì gọi dịch vụ cũ EID 8; nếu vẫn còn thì lặp vô hạn để không chạy lung tung
+- Đã đo thực tế: 	system_reset(0, 0): QEMU thoát ngay

@@ -1,0 +1,8 @@
+### sbi_dbcn_write_byte(c)      debug console, dịch vụ mới
+
+- Mục đích: 
+- Gọi SBI: EID = 0x4442434E, FID = 2
+- Tham số:c (a0): một byte
+- Trả về: int: 0 thành công
+- Lưu ý: Chỉ có ở đặc tả/OpenSBI mới (phải dò bằng sbi_probe_extension trước). Có thêm FID 0 (ghi cả khối nhớ) và FID 1 (đọc), nhận địa chỉ vật lý của vùng nhớ
+- Đã đo thực tế: write_byte('X') in ra X, trả 0

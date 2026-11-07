@@ -1,0 +1,8 @@
+### sbi_putchar()    (dịch vụ cũ)
+
+- Mục đích: 
+- Dùng cho: R4; gọi từ console.c thay cho ghi trực tiếp cổng UART
+- Gọi SBI: EID = 1, FID = 0
+- Tham số: c (a0): mã ký tự
+- Trả về: int: kết quả legacy ở a0 (0 khi thành công)
+- Đã đo thực tế: Dùng để in toàn bộ thí nghiệm, không mất ký tự

@@ -1,0 +1,1 @@
+gọi lúc khởi động trên CPU chính: đọc phiên bản, dò 4 nhóm (TIME, HSM, SRST, DBCN), lưu kết quả vào biến, in 1 dòng thông báo. Mọi hàm khác dựa vào các biến này để chọn dịch vụ mới hay dự phòng.
