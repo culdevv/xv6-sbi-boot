@@ -69,11 +69,19 @@ struct sbiret {
 #define SBI_EXT_BASE_GET_IMP_ID        1
 #define SBI_EXT_BASE_GET_IMP_VERSION   2
 #define SBI_EXT_BASE_PROBE_EXT         3
+#define SBI_EXT_BASE_GET_MVENDORID     4
+#define SBI_EXT_BASE_GET_MARCHID       5
+#define SBI_EXT_BASE_GET_MIMPID        6
 
 /* Legacy Extensions */
 #define SBI_EXT_LEGACY_SET_TIMER        0x00
 #define SBI_EXT_LEGACY_CONSOLE_PUTCHAR  0x01
 #define SBI_EXT_LEGACY_CONSOLE_GETCHAR  0x02
+#define SBI_EXT_LEGACY_CLEAR_IPI        0x03
+#define SBI_EXT_LEGACY_SEND_IPI         0x04
+#define SBI_EXT_LEGACY_REMOTE_FENCE_I   0x05
+#define SBI_EXT_LEGACY_REMOTE_SFENCE_VMA 0x06
+#define SBI_EXT_LEGACY_REMOTE_SFENCE_VMA_ASID 0x07
 #define SBI_EXT_LEGACY_SHUTDOWN         0x08
 
 /* TIME Extension */
@@ -85,6 +93,7 @@ struct sbiret {
 #define SBI_EXT_HSM_HART_START          0
 #define SBI_EXT_HSM_HART_STOP           1
 #define SBI_EXT_HSM_HART_GET_STATUS     2
+#define SBI_EXT_HSM_HART_SUSPEND        3
 
 /* HSM States */
 #define SBI_HSM_STATE_STARTED           0
