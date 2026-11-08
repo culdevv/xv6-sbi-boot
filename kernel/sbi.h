@@ -46,16 +46,16 @@ struct sbiret {
 
 /* 2. SBI Error Codes */
 
-#define SBI_SUCCESS               0
-#define SBI_ERR_FAILED            -1
-#define SBI_ERR_NOT_SUPPORTED     -2
-#define SBI_ERR_INVALID_PARAM     -3
-#define SBI_ERR_DENIED            -4
-#define SBI_ERR_INVALID_ADDRESS   -5
-#define SBI_ERR_ALREADY_AVAILABLE -6
-#define SBI_ERR_ALREADY_STARTED   -7
-#define SBI_ERR_ALREADY_STOPPED   -8
-#define SBI_ERR_NO_SHMEM          -9
+#define SBI_SUCCESS                0 /* thanh cong*/
+#define SBI_ERR_FAILED            -1 /* that bai */
+#define SBI_ERR_NOT_SUPPORTED     -2 /* khong ho tro */
+#define SBI_ERR_INVALID_PARAM     -3 /* tham so khong hop le */
+#define SBI_ERR_DENIED            -4 /* bi tu choi */
+#define SBI_ERR_INVALID_ADDRESS   -5 /* dia chi khong hop le */
+#define SBI_ERR_ALREADY_AVAILABLE -6 /* da co san */
+#define SBI_ERR_ALREADY_STARTED   -7 /* da bat dau */
+#define SBI_ERR_ALREADY_STOPPED   -8 /* da dung */
+#define SBI_ERR_NO_SHMEM          -9 /* khong co bo nho chia se */
 
 /* 3. Extension IDs and Function IDs */
 
