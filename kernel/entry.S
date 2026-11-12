@@ -3,7 +3,7 @@
         # kernel.ld causes the following code to
         # be placed at 0x80200000.
     .section .text
-    .globl _entry
+    .global _entry
 	# set up a stack for C.
 	# set up a stack for C.
         # stack0 is declared in start.c,
@@ -11,22 +11,31 @@
         # sp = stack0 + ((hartid + 1) * 4096)
 
 _entry:
-    mv   s0, a0              # hartid (cất trước khi dùng a0)
-    mv   s1, a1              # địa chỉ DTB
-    li   t0, 8               # NCPU
-    bgeu s0, t0, park        # hartid không hợp lệ -> ngủ
-    mv   tp, s0
-    la   sp, stack0
-    li   t1, 4096
-    addi t2, s0, 1
-    mul  t1, t1, t2
-    add  sp, sp, t1          # sp = stack0 + 4096*(hartid+1)
-    mv   a0, s0
-    mv   a1, s1
-    call boot_stub
-park:
-    wfi
-    j    park
+# OpenSBI: a0 = hartid, a1 = dtb. Chỉ dùng t0..t2, giữ nguyên a0/a1.
+        li   t0, 8                  # NCPU
+        bgeu a0, t0, spin
+        la   sp, stack0
+        li   t0, 4096
+        addi t1, a0, 1
+        mul  t0, t0, t1
+        add  sp, sp, t0
+        call start
+spin:
+        wfi
+        j    spin
+
+        .global _secondary_entry
+_secondary_entry:
+        # HSM start: a0 = hartid, a1 = opaque
+        li   t0, 8
+        bgeu a0, t0, spin
+        la   sp, stack0
+        li   t0, 4096
+        addi t1, a0, 1
+        mul  t0, t0, t1
+        add  sp, sp, t0
+        call secondary_start
+        j    spin
 
 
 
