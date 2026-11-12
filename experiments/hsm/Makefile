@@ -18,7 +18,7 @@ hsm.elf: $(OBJS) linker.ld
 start.o: start.S
 	$(CC) $(CFLAGS) -c $< -o $@
 
-main.o: main.c uart.h
+main.o: main.c uart.h ../../kernel/sbi.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 uart.o: uart.c uart.h
