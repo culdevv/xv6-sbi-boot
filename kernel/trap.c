@@ -6,7 +6,7 @@
 #include "proc.h"
 #include "defs.h"
 #include "sbi.h"
-#define TIMER_INTERVAL 100000 // FIXED BY LUC 
+#define TIMER_INTERVAL 100000 // FIXED BY LUC
 
 struct spinlock tickslock;
 uint ticks;
@@ -187,7 +187,7 @@ clockintr()
   }
 
   // set up the next timer interrupt.
-  // w_stimecmp(r_time() + 1000000); (BAN GOC: cơ chế Sstc trực tiếp 
+  // w_stimecmp(r_time() + 1000000); (BAN GOC: cơ chế Sstc trực tiếp
   //thông qua thanh ghi stimecmp, không phải cách đặt timer qua SBI TIME.) DELETED BY LUC
   sbi_set_timer(r_time() + TIMER_INTERVAL); // FIXED BY LUC
 }
@@ -197,7 +197,6 @@ clockintr()
 // returns 2 if timer interrupt,
 // 1 if other device,
 // 0 if not recognized.
-
 
 int
 devintr()
@@ -232,6 +231,4 @@ devintr()
   } else {
     return 0;
   }
-
-
 }
