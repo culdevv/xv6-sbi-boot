@@ -46,7 +46,7 @@ struct sbiret {
 
 /* 2. SBI Error Codes */
 
-#define SBI_SUCCESS               0 /* thanh cong*/
+#define SBI_SUCCESS               0  /* thanh cong*/
 #define SBI_ERR_FAILED            -1 /* that bai */
 #define SBI_ERR_NOT_SUPPORTED     -2 /* khong ho tro */
 #define SBI_ERR_INVALID_PARAM     -3 /* tham so khong hop le */
