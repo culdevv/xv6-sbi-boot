@@ -1,0 +1,2 @@
+kernel/sbi.c:20: *   and mret transition.
+kernel/trap.c:183:  w_stimecmp(r_time() + 1000000);
