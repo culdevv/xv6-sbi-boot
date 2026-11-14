@@ -6,7 +6,7 @@
 #include "proc.h"
 #include "defs.h"
 #include "sbi.h"
-#define TIMER_INTERVAL 100000 // FIXED BY LUC
+#define TIMER_INTERVAL 1000000
 
 struct spinlock tickslock;
 uint ticks;
@@ -29,7 +29,7 @@ static void
 sbi_timerinit(void)
 {
   w_stvec((uint64)kernelvec);
-  w_sie(r_sie() | SIE_STIE); //[A] bật ngắt ngoài + timer
+  w_sie(r_sie() | SIE_SEIE | SIE_STIE | SIE_SSIE);
   sbi_set_timer(r_time() + TIMER_INTERVAL);
 }
 
@@ -202,6 +202,7 @@ clockintr()
 int
 devintr()
 {
+
   uint64 scause = r_scause();
 
   if (scause == 0x8000000000000009L) {

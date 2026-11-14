@@ -8,7 +8,7 @@
 // 0C000000 -- PLIC
 // 10000000 -- uart0
 // 10001000 -- virtio disk
-// 80000000 -- qemu's boot ROM loads the kernel here,
+// 80200000 -- qemu's boot ROM loads the kernel here,
 //             then jumps here.
 // unused RAM after 80000000.
 

@@ -226,7 +226,7 @@ userinit(void)
   p->cwd = namei("/");
 
   p->state = RUNNABLE;
-
+  printk("[USERINIT] pid=%d state=%d\n", p->pid, p->state); //test 14-11
   release(&p->lock);
 }
 
@@ -425,6 +425,55 @@ kwait(uint64 addr)
 //  - swtch to start running that process.
 //  - eventually that process transfers control
 //    via swtch back to the scheduler.
+
+/* scheduler(void) GỐC:
+// void
+// scheduler(void)
+// {
+//   struct proc *p;
+//   struct cpu *c = mycpu();
+
+//   c->proc = 0;
+//   for (;;) {
+//     // The most recent process to run may have had interrupts
+//     // turned off; enable them to avoid a deadlock if all
+//     // processes are waiting. Then turn them back off
+//     // to avoid a possible race between an interrupt
+//     // and wfi.
+//     intr_on();
+//     intr_off();
+
+//     int found = 0;
+//     for (p = proc; p < &proc[NPROC]; p++) {
+//       acquire(&p->lock);
+//       if (p->state == RUNNABLE) {
+//         // Switch to chosen process.  It is the process's job
+//         // to release its lock and then reacquire it
+//         // before jumping back to us.
+//         p->state = RUNNING;
+//         c->proc = p;
+//         swtch(&c->context, &p->context);
+
+//         // Don't re-enable interrupts on release.
+//         mycpu()->intena = 0;
+
+//         // Process is done running for now.
+//         // It should have changed its p->state before coming back.
+//         c->proc = 0;
+//         found = 1;
+//       }
+//       release(&p->lock);
+//     }
+//     if (found == 0) {
+//       // nothing to run; stop running on this core until an interrupt.
+//       asm volatile("wfi");
+//     }
+//   }
+// }
+*/
+
+//TEST 14-11: scheduler() with printk() to trace the boot process
+
 void
 scheduler(void)
 {
@@ -432,6 +481,7 @@ scheduler(void)
   struct cpu *c = mycpu();
 
   c->proc = 0;
+
   for (;;) {
     // The most recent process to run may have had interrupts
     // turned off; enable them to avoid a deadlock if all
@@ -442,32 +492,48 @@ scheduler(void)
     intr_off();
 
     int found = 0;
+
     for (p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
+
       if (p->state == RUNNABLE) {
-        // Switch to chosen process.  It is the process's job
-        // to release its lock and then reacquire it
-        // before jumping back to us.
+        // printk("[SCHED] hart=%d found RUNNABLE pid=%d\n",
+              //  cpuid(), p->pid);
+
+        // Switch to chosen process.
         p->state = RUNNING;
         c->proc = p;
+
+        // printk("[SCHED] hart=%d switching to pid=%d\n",
+              //  cpuid(), p->pid);
+
         swtch(&c->context, &p->context);
+
+        // printk("[SCHED] hart=%d returned from pid=%d, state=%d\n",
+              //  cpuid(), p->pid, p->state);
 
         // Don't re-enable interrupts on release.
         mycpu()->intena = 0;
 
         // Process is done running for now.
-        // It should have changed its p->state before coming back.
         c->proc = 0;
         found = 1;
       }
+
       release(&p->lock);
     }
+
     if (found == 0) {
-      // nothing to run; stop running on this core until an interrupt.
+      // printk("[SCHED] hart=%d no RUNNABLE process, entering wfi\n",
+      //        cpuid());
+
+      // Nothing to run; stop running on this core until an interrupt.
       asm volatile("wfi");
     }
   }
 }
+
+// END TEST 14-11
 
 // Switch to scheduler.  Must hold only p->lock
 // and have changed proc->state. Saves and restores
