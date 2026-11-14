@@ -5,7 +5,7 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "defs.h"
-
+#include "sbi.h"
 struct spinlock tickslock;
 uint ticks;
 
@@ -27,6 +27,8 @@ void
 trapinithart(void)
 {
   w_stvec((uint64)kernelvec);
+  w_sie(r_sie() | SIE_SEIE | SIE_STIE); // [A] bật ngắt ngoài + timer
+  // dòng sbi_set_timer(...) để B thêm ở T4-B2
 }
 
 //
