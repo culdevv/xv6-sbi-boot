@@ -28,7 +28,6 @@ trapinithart(void)
 {
   w_stvec((uint64)kernelvec);
   w_sie(r_sie() | SIE_SEIE | SIE_STIE); // [A] bật ngắt ngoài + timer
-  // dòng sbi_set_timer(...) để B thêm ở T4-B2
 }
 
 //
