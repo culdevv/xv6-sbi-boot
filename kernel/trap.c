@@ -5,6 +5,8 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "defs.h"
+#include "sbi.h"
+#define TIMER_INTERVAL 1000000
 
 struct spinlock tickslock;
 uint ticks;
@@ -22,11 +24,21 @@ trapinit(void)
   initlock(&tickslock, "time");
 }
 
+//Ham khoi tao SBI - FIXED BY LUC
+static void
+sbi_timerinit(void)
+{
+  w_stvec((uint64)kernelvec);
+  w_sie(r_sie() | SIE_SEIE | SIE_STIE | SIE_SSIE);
+  sbi_set_timer(r_time() + TIMER_INTERVAL);
+}
+
 // set up to take exceptions and traps while in the kernel.
 void
 trapinithart(void)
 {
   w_stvec((uint64)kernelvec);
+  sbi_timerinit(); // FIXED BY LUC (MOI HART DEU CO THE NHAN TIMER INTERRUPT RIENG)
 }
 
 //
@@ -175,10 +187,10 @@ clockintr()
     release(&tickslock);
   }
 
-  // ask for the next timer interrupt. this also clears
-  // the interrupt request. 1000000 is about a tenth
-  // of a second.
-  w_stimecmp(r_time() + 1000000);
+  // set up the next timer interrupt.
+  // w_stimecmp(r_time() + 1000000); (BAN GOC: cơ chế Sstc trực tiếp
+  //thông qua thanh ghi stimecmp, không phải cách đặt timer qua SBI TIME.) DELETED BY LUC
+  sbi_set_timer(r_time() + TIMER_INTERVAL); // FIXED BY LUC
 }
 
 // check if it's an external interrupt or software interrupt,
@@ -186,9 +198,11 @@ clockintr()
 // returns 2 if timer interrupt,
 // 1 if other device,
 // 0 if not recognized.
+
 int
 devintr()
 {
+
   uint64 scause = r_scause();
 
   if (scause == 0x8000000000000009L) {

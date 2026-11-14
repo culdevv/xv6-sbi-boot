@@ -28,6 +28,9 @@ plicinithart(void)
 
   // set this hart's S-mode priority threshold to 0.
   *(volatile uint32 *)PLIC_SPRIORITY(hart) = 0;
+
+  // Enable Supervisor External Interrupt in CPU's sie register.
+  w_sie(r_sie() | SIE_SEIE); // fix 14-11
 }
 
 // ask the PLIC what interrupt we should serve.

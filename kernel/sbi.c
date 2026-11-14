@@ -77,8 +77,10 @@ sbi_getchar(void)
 void
 sbi_set_timer(unsigned long stime_value)
 {
-  sbi_ecall(SBI_EXT_TIME, SBI_EXT_TIME_SET_TIMER, (long)stime_value, 0, 0, 0, 0,
-            0);
+  sbi_ecall(SBI_EXT_TIME,           // a7 = EID
+            SBI_EXT_TIME_SET_TIMER, // a6 = FID
+            (long)stime_value,      // a0 = stime_value
+            0, 0, 0, 0, 0);
 }
 
 // SBI System Reset (shutdown)

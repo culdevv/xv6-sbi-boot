@@ -1,0 +1,126 @@
+1. SBI call flow (Sơ đồ trình tự gọi OpenSBI - Trang P4)
+Lý thuyết & Luồng hoạt động:
+
+Chuẩn bị tham số (S-mode): Kernel ở Supervisor mode muốn nhờ OpenSBI thực thi một thao tác phần cứng thì sẽ nạp Mã dịch vụ vào thanh ghi $a7 (Extension ID - EID), Mã hàm vào $a6 (Function ID - FID), và các tham số dữ liệu vào từ $a0 đến $a5.   
+
+
+
+Thực thi ecall: Kernel phát lệnh ecall. Lệnh này bẫy CPU, chuyển quyền điều khiển từ S-mode sang M-mode (Machine mode) của OpenSBI.   
+
+
+
+Xử lý ở M-mode: OpenSBI Handler tiếp nhận bẫy, kiểm tra cặp EID/FID để gọi đúng hàm xử lý phần cứng bên dưới.   
+
+
+
+Thực thi mret: OpenSBI xử lý xong, phát lệnh mret để trả quyền điều khiển về S-mode cho Kernel.   
+
+
+
+Nhận kết quả: Kết quả trả về gồm 2 giá trị đóng gói vào cấu trúc struct sbiret: thanh ghi $a0 = sbiret.error (
+0 là thành công, khác 
+0 là mã lỗi như 
+−2: SBI_ERR_NOT_SUPPORTED) và thanh ghi $a1 = sbiret.value.   
+
+
+
+2. Timer flow (Luồng xử lý Ngắt Đồng hồ - Trang P5)
+Lý thuyết & Luồng hoạt động:
+
+CLINT Hardware: Bộ định thời phần cứng ở M-mode phát hiện thời gian thực 
+mtime≥mtimecmp.   
+
+
+
+OpenSBI Trap Handler: OpenSBI nhận ngắt M-mode, đánh cờ ngắt Timer S-mode bằng cách bật bit STIP (Supervisor Timer Interrupt Pending) trong thanh ghi sip/mip, rồi chuyển tiếp xuống S-mode.   
+
+
+
+Kernel kernelvec.S: CPU nhảy vào bẫy S-mode, lưu ngữ cảnh thanh ghi hiện tại vào trapframe.   
+
+
+
+Kernel trap.c: Hàm usertrap()/kerneltrap() nhận mã nguyên nhân scause = 0x8000000000000005 (Supervisor Timer Interrupt) và gọi devintr().   
+
+
+
+Cài đặt Timer kế tiếp (sbi_set_timer): Kernel phát lệnh ecall với EID = 0x54494D45 (TIME Extension) và FID = 0 để nhờ OpenSBI hẹn giờ cho lần ngắt tiếp theo (
+r_time()+INTERVAL).   
+
+
+
+yield(): Kernel nhường CPU và chuyển sang tiến trình khác.   
+
+
+
+3. State machine hart (Biểu đồ trạng thái CPU/Hart - Trang P3)
+Lý thuyết & Luồng hoạt động:
+
+Mô tả vòng đời quản lý trạng thái của từng nhân CPU (Hart) theo chuẩn SBI HSM Extension (EID 0x48534D).   
+
+
+
+Khởi động (STOPPED 
+→ START_PENDING 
+→ STARTED): Mặc định khi bật máy, các Hart phụ (Hart 1..N) nằm ở trạng thái nghỉ STOPPED. Hart chính (Hart 0) gọi sbi_hart_start(hartid, start_addr, opaque) để chuyển Hart phụ sang START_PENDING. Khi OpenSBI hoàn tất giao quyền ở S-mode, Hart phụ chuyển sang STARTED và chạy mã Kernel (secondary_entry).   
+
+
+
+Tạm dừng/Tắt (STARTED 
+→ STOP_PENDING/SUSPENDED): Hart có thể dừng (sbi_hart_stop) hoặc đi vào chế độ chờ ngắt tiết kiệm điện (sbi_hart_suspend), sau đó thức dậy lại STARTED khi có ngắt WFI.   
+
+
+
+4. Memory map (Bản đồ bộ nhớ - Trang P2)
+Lý thuyết & Khớp Thực nghiệm:
+
+0x00000000 - 0x7FFFFFFF: Vùng MMIO cho thiết bị ngoại vi (UART 0x10000000, PLIC 0x0C000000).   
+
+
+
+0x80000000 - 0x801FFFFF (2MB đầu RAM): Vùng Reserved dành riêng cho firmware OpenSBI chạy ở M-mode. Phần cứng PMP chặn không cho Kernel ở S-mode can thiệp đè vào.   
+
+
+
+0x80200000 (KERNBASE): Địa chỉ nạp Kernel mới. OpenSBI sẽ nhảy tới đây sau khi khởi tạo M-mode xong.   
+
+
+
+0x87e00000 (DTB Region): Vùng RAM chứa bảng mô tả phần cứng Device Tree Binary do QEMU tạo ra, địa chỉ này được OpenSBI truyền trực tiếp cho Kernel qua thanh ghi $a1 (đã xác nhận đúng qua log thực nghiệm Task SBI-37).   
+
+
+
+end đến 0x88000000 (PHYSTOP): Vùng cấp phát động kalloc cho Page Tables và User Processes.   
+
+
+
+5. Boot sequence mới (xv6-sbi - Trang P1/Boot mới)
+Lý thuyết & Điểm khác biệt so với xv6 gốc:
+
+Thay thế start.c: Khởi tạo M-mode (mstatus, pmp, mideleg, timerinit) hoàn toàn do OpenSBI đảm nhận.   
+
+
+
+Tiếp nhận tham số: Ngay tại _entry (kernel/entry.S), Kernel tiếp nhận $a0 = hartid (mã CPU) và $a1 = dtb_pa (con trỏ DTB) do OpenSBI giao lại.   
+
+
+
+Khởi chạy Đa nhân: Hart 0 làm Boot Hart chạy main(), cài đặt bộ nhớ/trap rồi gọi sbi_hart_start() đánh thức các Hart phụ nhảy vào secondary_entry.   
+
+
+
+6. Test architecture (Kiến trúc test tự động - Trang P6)
+Lý thuyết & Luồng thực thi:
+
+Host Machine: Chạy script kiểm thử tự động tests/run.sh hoặc make test.   
+
+
+
+QEMU Process: Chạy cờ -machine virt -bios default -kernel kernel -smp N và đặt giới hạn thời gian qua lệnh timeout.   
+
+Cổng Serial (UART): Kernel xuất log kết quả qua hàm sbi_putchar ra Terminal.   
+
+Bộ lọc Output: Script Host lọc kết quả bằng grep/RegEx các chuỗi kỳ vọng (vd: "ALL TESTS PASSED", "init: starting sh").   
+
+
+Xuất báo cáo: Phân loại PASS, FAIL, TIMEOUT và ghi log tổng hợp vào thư mục test-results/.   

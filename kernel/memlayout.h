@@ -8,7 +8,7 @@
 // 0C000000 -- PLIC
 // 10000000 -- uart0
 // 10001000 -- virtio disk
-// 80000000 -- qemu's boot ROM loads the kernel here,
+// 80200000 -- qemu's boot ROM loads the kernel here,
 //             then jumps here.
 // unused RAM after 80000000.
 
@@ -40,8 +40,10 @@
 // the kernel expects there to be RAM
 // for use by the kernel and user pages
 // from physical address 0x80000000 to PHYSTOP.
-#define KERNBASE 0x80000000L
-#define PHYSTOP  (KERNBASE + 128 * 1024 * 1024)
+#define KERNBASE 0x80200000L
+#define PHYSTOP  (0x80000000L + 128 * 1024 * 1024)
+#define RAMBASE  0x80000000L
+//0x80000000-0x801FFFFF thuộc OpenSBI, kernel chỉ dùng từ KERNBASE
 
 // map the trampoline page to the highest address,
 // in both user and kernel space.
