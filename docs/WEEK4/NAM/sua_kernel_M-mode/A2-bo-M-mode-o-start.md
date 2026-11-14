@@ -2,7 +2,7 @@ W4-A2: take hartid/dtb from OpenSBI, remove M-mode setup in start
 
 Đã làm:
 - Lập bảng rà soát lệnh M-mode (dòng | làm gì | kernel mới làm gì),
-  lưu tại [đường dẫn file bảng].
+  lưu tại docs/WEEK4/NAM/logs.
 - kernel/entry.S: dùng t0-t2, giữ nguyên a0 (hartid) và a1 (dtb);
   kiểm tra hartid < NCPU, sai thì wfi; sp = stack0 + (hartid+1)*4096;
   gọi start(hartid, dtb).
@@ -18,8 +18,8 @@ Lệnh kiểm tra:
   Debug: make qemu-gdb CPUS=1 -> b _entry -> info registers a0 a1
 
 Kết quả:
-- grep: không còn lệnh M-mode được gọi [dán kết quả].
+- grep: không còn lệnh M-mode được gọi lưu tại docs/WEEK4/NAM/logs.
 - Boot: banner OpenSBI -> "xv6 kernel is booting" -> "init: starting sh" -> "$".
 - ls, cat README, echo hi chạy đúng.
-- GDB: tại _entry a0=[0], a1=[0x...] (địa chỉ DTB).
+- GDB: tại _entry a0=[0], a1=[0x87...] (địa chỉ DTB).
 - Chưa có timer nên chưa chia thời gian giữa tiến trình (việc của B2).
