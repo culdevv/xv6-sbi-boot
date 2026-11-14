@@ -28,7 +28,8 @@ trapinit(void)
 static void
 sbi_timerinit(void)
 {
-  w_sie(r_sie() | SIE_STIE);
+  w_stvec((uint64)kernelvec);
+  w_sie(r_sie() | SIE_STIE); //[A] bật ngắt ngoài + timer
   sbi_set_timer(r_time() + TIMER_INTERVAL);
 }
 
