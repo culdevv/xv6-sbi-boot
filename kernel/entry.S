@@ -2,9 +2,10 @@
         # and causes each hart (i.e. CPU) to jump there.
         # kernel.ld causes the following code to
         # be placed at 0x80200000.
-.section .text
-.global _entry
+        .section .text
+        .global _entry
 _entry:
+>>>>>>> 336dff6 (W4-A2: take hartid/dtb from OpenSBI, remove M-mode setup in start)
         # OpenSBI: a0 = hartid, a1 = dtb. Chỉ dùng t0..t1, giữ nguyên a0/a1.
         li   t0, 8                  # NCPU
         bgeu a0, t0, spin           # hartid >= 8: không có stack, cho ngủ
@@ -16,6 +17,7 @@ _entry:
         call start                  # start(hartid, dtb)
 spin:
         wfi
+<<<<<<< HEAD
         j spin
 
         .global _secondary_entry
