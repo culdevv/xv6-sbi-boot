@@ -498,19 +498,19 @@ scheduler(void)
 
       if (p->state == RUNNABLE) {
         // printk("[SCHED] hart=%d found RUNNABLE pid=%d\n",
-              //  cpuid(), p->pid);
+        //  cpuid(), p->pid);
 
         // Switch to chosen process.
         p->state = RUNNING;
         c->proc = p;
 
         // printk("[SCHED] hart=%d switching to pid=%d\n",
-              //  cpuid(), p->pid);
+        //  cpuid(), p->pid);
 
         swtch(&c->context, &p->context);
 
         // printk("[SCHED] hart=%d returned from pid=%d, state=%d\n",
-              //  cpuid(), p->pid, p->state);
+        //  cpuid(), p->pid, p->state);
 
         // Don't re-enable interrupts on release.
         mycpu()->intena = 0;

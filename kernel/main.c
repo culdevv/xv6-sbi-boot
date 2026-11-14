@@ -52,12 +52,12 @@ main()
 */
 
 //test 14-11 lan 2 T4-B2
-#include "types.h"      // Khai báo kiểu uint64
-#include "param.h"      // Khai báo hằng số NCPU
+#include "types.h" // Khai báo kiểu uint64
+#include "param.h" // Khai báo hằng số NCPU
 #include "memlayout.h"
 #include "riscv.h"
 #include "defs.h"
-#include "sbi.h"        // Khai báo sbi_hart_start (phải nằm dưới types.h)
+#include "sbi.h" // Khai báo sbi_hart_start (phải nằm dưới types.h)
 
 extern void _entry(void); // Khai báo điểm nhập _entry từ file entry.S[cite: 18]
 
