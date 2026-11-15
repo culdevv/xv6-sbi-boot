@@ -78,8 +78,8 @@ uartinit(void)
 void
 uartwrite(char buf[], int n)
 {
-  acquiresleep(     // test 15-11
-    &uart_tx_lock); // [T4-B3] Giu khoa de cac tien trinh khong in de chu nhau
+  // acquiresleep(     // test 15-11
+  //   &uart_tx_lock); // [T4-B3] Giu khoa de cac tien trinh khong in de chu nhau
 
   for (int i = 0; i < n; i++) {
     sbi_putchar(
@@ -87,7 +87,7 @@ uartwrite(char buf[], int n)
         [i]); // [T4-B3] Gui tung byte qua OpenSBI thay vi ghi MMIO THR + sleep()
   }
 
-  releasesleep(&uart_tx_lock); // test 15-11
+  // releasesleep(&uart_tx_lock); // test 15-11
 }
 
 // write a byte to the console without using
