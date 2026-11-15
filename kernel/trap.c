@@ -6,11 +6,8 @@
 #include "proc.h"
 #include "defs.h"
 #include "sbi.h"
-<<<<<<< HEAD
 #define TIMER_INTERVAL 1000000
 
-=======
->>>>>>> 336dff6 (W4-A2: take hartid/dtb from OpenSBI, remove M-mode setup in start)
 struct spinlock tickslock;
 uint ticks;
 
@@ -41,12 +38,7 @@ void
 trapinithart(void)
 {
   w_stvec((uint64)kernelvec);
-<<<<<<< HEAD
   sbi_timerinit(); // FIXED BY LUC (MOI HART DEU CO THE NHAN TIMER INTERRUPT RIENG)
-=======
-  w_sie(r_sie() | SIE_SEIE | SIE_STIE); // [A] bật ngắt ngoài + timer
-  // dòng sbi_set_timer(...) để B thêm ở T4-B2
->>>>>>> 336dff6 (W4-A2: take hartid/dtb from OpenSBI, remove M-mode setup in start)
 }
 
 //
