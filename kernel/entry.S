@@ -1,21 +1,19 @@
-        # qemu -kernel loads the kernel at 0x80000000
+        # qemu -kernel loads the kernel at 0x80200000
         # and causes each hart (i.e. CPU) to jump there.
         # kernel.ld causes the following code to
-        # be placed at 0x80000000.
+        # be placed at 0x80200000.
 .section .text
 .global _entry
 _entry:
-        # set up a stack for C.
-        # stack0 is declared in start.c,
-        # with a 4096-byte stack per CPU.
-        # sp = stack0 + ((hartid + 1) * 4096)
-        la sp, stack0
-        li a0, 1024*4
-        csrr a1, mhartid
-        addi a1, a1, 1
-        mul a0, a0, a1
-        add sp, sp, a0
-        # jump to start() in start.c
-        call start
+        # OpenSBI: a0 = hartid, a1 = dtb. Chỉ dùng t0..t1, giữ nguyên a0/a1.
+        li   t0, 8                  # NCPU
+        bgeu a0, t0, spin           # hartid >= 8: không có stack, cho ngủ
+        la   sp, stack0
+        li   t0, 4096
+        addi t1, a0, 1
+        mul  t0, t0, t1             # t0 = 4096 * (hartid + 1)
+        add  sp, sp, t0             # sp = stack0 + 4096*(hartid+1)
+        call start                  # start(hartid, dtb)
 spin:
+        wfi
         j spin
