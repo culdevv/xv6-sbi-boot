@@ -40,7 +40,7 @@
 #define LSR_TX_IDLE     (1 << 5) // THR can accept another character to send
 
 // for sending threads to serialize their writes
-static struct sleeplock tx_lock;
+static struct sleeplock uart_tx_lock;
 // [T4-B3] Da xoa tx_chan vi khong con cho ngat TX phan cung
 
 extern volatile int panicking; // from printk.c
@@ -71,14 +71,15 @@ uartinit(void)
   // [T4-B3] Chi bat ngat nhan (RX) cho ban phim, tat ngat truyen (TX)
   WriteReg(IER, IER_RX_ENABLE);
 
-  initsleeplock(&tx_lock, "uart");
+  initsleeplock(&uart_tx_lock, "uart");
 }
 
 // transmit buf[] to the console via SBI.
-void uartwrite(char buf[], int n)
+void
+uartwrite(char buf[], int n)
 {
-  acquiresleep(
-    &tx_lock); // [T4-B3] Giu khoa de cac tien trinh khong in de chu nhau
+  acquiresleep(     // test 15-11
+    &uart_tx_lock); // [T4-B3] Giu khoa de cac tien trinh khong in de chu nhau
 
   for (int i = 0; i < n; i++) {
     sbi_putchar(
@@ -86,13 +87,14 @@ void uartwrite(char buf[], int n)
         [i]); // [T4-B3] Gui tung byte qua OpenSBI thay vi ghi MMIO THR + sleep()
   }
 
-  releasesleep(&tx_lock);
+  releasesleep(&uart_tx_lock); // test 15-11
 }
 
 // write a byte to the console without using
 // interrupts, for use by kernel printk() and
 // to echo characters.
-void uartputc_sync(int c)
+void
+uartputc_sync(int c)
 {
   if (panicking == 0)
     push_off();
