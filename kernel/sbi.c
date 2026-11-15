@@ -4,7 +4,7 @@
 #include "sbi.h"
 
 /*
- * SBI BOOT REQUIREMENTS - MEMBER A
+ * SBI BOOT REQUIREMENTS - LUC
  *
  * This file assumes that:
  * 1. OpenSBI is loaded as the M-mode firmware.
@@ -57,6 +57,22 @@ void
 sbi_putchar(int c)
 {
   sbi_ecall(SBI_EXT_LEGACY_CONSOLE_PUTCHAR, 0, (long)c, 0, 0, 0, 0, 0);
+}
+
+long
+sbi_console_write(const char *buf, unsigned long len)
+{
+  // Trong xv6 kernel identity-mapped, địa chỉ ảo kernel = địa chỉ vật lý
+  unsigned long pa = (unsigned long)buf;
+  struct sbiret ret =
+    sbi_ecall(SBI_EXT_DBCN, SBI_EXT_DBCN_CONSOLE_WRITE, len, pa, 0, 0, 0, 0);
+  if (ret.error == SBI_ERR_NOT_SUPPORTED) {
+    for (unsigned long i = 0; i < len; i++) {
+      sbi_putchar(buf[i]);
+    }
+    return len;
+  }
+  return ret.error < 0 ? ret.error : ret.value;
 }
 
 // Legacy Console Getchar

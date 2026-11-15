@@ -140,4 +140,6 @@ struct sbiret sbi_hart_get_status(unsigned long hartid);
 /* Base Extension */
 int sbi_probe_extension(long ext_id);
 
+/* DBCN Extension */
+long sbi_console_write(const char *buf, unsigned long len);
 #endif /* __SBI_H__ */
