@@ -204,3 +204,8 @@ check-qemu-version:
 .PHONY: fmt
 fmt:
 	clang-format -i $(wildcard kernel/*.[ch] user/*.[ch] mkfs/*.c)
+
+test: $K/kernel
+	rm -f fs.img
+	$(MAKE) fs.img
+	python3 tests/run_tests.py
