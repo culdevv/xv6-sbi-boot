@@ -75,8 +75,7 @@ uartinit(void)
 }
 
 // transmit buf[] to the console via SBI.
-void
-uartwrite(char buf[], int n)
+void uartwrite(char buf[], int n)
 {
   acquiresleep(
     &tx_lock); // [T4-B3] Giu khoa de cac tien trinh khong in de chu nhau
@@ -93,8 +92,7 @@ uartwrite(char buf[], int n)
 // write a byte to the console without using
 // interrupts, for use by kernel printk() and
 // to echo characters.
-void
-uartputc_sync(int c)
+void uartputc_sync(int c)
 {
   if (panicking == 0)
     push_off();

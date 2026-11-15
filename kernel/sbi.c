@@ -53,8 +53,7 @@ sbi_ecall(long eid, long fid, long a0, long a1, long a2, long a3, long a4,
 
 // Legacy Console Putchar
 // Output one character through OpenSBI.
-void
-sbi_putchar(int c)
+void sbi_putchar(int c)
 {
   sbi_ecall(SBI_EXT_LEGACY_CONSOLE_PUTCHAR, 0, (long)c, 0, 0, 0, 0, 0);
 }

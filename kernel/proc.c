@@ -226,7 +226,7 @@ userinit(void)
   p->cwd = namei("/");
 
   p->state = RUNNABLE;
-  printk("[USERINIT] pid=%d state=%d\n", p->pid, p->state); //test 14-11
+  // printk("[USERINIT] pid=%d state=%d\n", p->pid, p->state); //test 14-11
   release(&p->lock);
 }
 

@@ -36,12 +36,12 @@ void
 consputc(int c)
 {
   if (c == BACKSPACE) {
-    // In đè khoảng trắng rồi lùi con trỏ lại khi nhấn Backspace
-    sbi_putchar('\b');
-    sbi_putchar(' ');
-    sbi_putchar('\b');
+    // In đè khoảng trắng rồi lùi con trỏ lại khi nhấn Backspace.
+    uartputc_sync('\b');
+    uartputc_sync(' ');
+    uartputc_sync('\b');
   } else {
-    sbi_putchar(c);
+    uartputc_sync(c);
   }
 }
 
