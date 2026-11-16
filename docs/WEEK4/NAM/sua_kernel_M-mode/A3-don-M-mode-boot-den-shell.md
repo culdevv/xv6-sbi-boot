@@ -18,3 +18,4 @@ Kết quả:
 - Build sạch, boot đến "$", ls/cat chạy đúng.
 - usertests -q: bị treo, không thể tiếp tục 
   thời gian do chưa có timer, không phải lỗi file/pipe.
+NOTE: cập nhật: sau khi có timer(Lực), cập nhật lại chương trình và đã chạy thành công usertests -q, đạt ALL TESTS PASSED
