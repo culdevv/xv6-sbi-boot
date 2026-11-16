@@ -59,7 +59,6 @@ main()
 #include "defs.h"
 #include "sbi.h" // Khai báo sbi_hart_start (phải nằm dưới types.h)
 
-
 extern void _secondary_entry(void);
 
 static volatile int started = 0;
@@ -107,8 +106,7 @@ main()
       struct sbiret status = sbi_hart_get_status(i);
 
       if (status.error != SBI_SUCCESS) {
-        printk("hart %d: get_status error %d\n",
-               i, (int)status.error);
+        printk("hart %d: get_status error %d\n", i, (int)status.error);
         continue;
       }
 
@@ -118,13 +116,11 @@ main()
       }
 
       if (status.value != SBI_HSM_STATE_STOPPED) {
-        printk("hart %d is not stopped, state=%d\n",
-               i, (int)status.value);
+        printk("hart %d is not stopped, state=%d\n", i, (int)status.value);
         continue;
       }
 
-      struct sbiret ret =
-        sbi_hart_start(i, (uint64)_secondary_entry, 0);
+      struct sbiret ret = sbi_hart_start(i, (uint64)_secondary_entry, 0);
 
       if (ret.error == SBI_SUCCESS) {
         printk("hart %d start request succeeded\n", i);
@@ -132,8 +128,7 @@ main()
                  ret.error == SBI_ERR_ALREADY_STARTED) {
         printk("hart %d already available or started\n", i);
       } else {
-        printk("hart %d start failed, error=%d\n",
-               i, (int)ret.error);
+        printk("hart %d start failed, error=%d\n", i, (int)ret.error);
       }
     }
   }
