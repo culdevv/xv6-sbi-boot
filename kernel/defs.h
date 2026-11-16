@@ -150,7 +150,8 @@ void            uartinit(void);
 void            uartintr(void);
 void            uartwrite(char [], int);
 void            uartputc_sync(int);
-
+// main.c
+void secondary_start(uint64 hartid);
 // vm.c
 void            kvminit(void);
 void            kvminithart(void);
