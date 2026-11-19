@@ -62,81 +62,96 @@ main()
 extern void _secondary_entry(void);
 
 static volatile int started = 0;
+static volatile int boot_hart_done = 0;
 
 // Boot hart: khoi tao tai nguyen dung chung va danh thuc cac hart phu.
+
 void
 main()
 {
-  consoleinit();
-  printkinit();
+  // Chi mot hart duoc phep khoi tao tai nguyen dung chung.
+  if (__sync_lock_test_and_set(&boot_hart_done, 1) == 0) {
+    consoleinit();
+    printkinit();
 
-  printk("\n");
-  printk("xv6 kernel is booting\n");
-  printk("\n");
+    printk("\n");
+    printk("xv6 kernel is booting\n");
+    printk("\n");
 
-  // Khoi tao tai nguyen dung chung.
-  kinit();
-  kvminit();
-  kvminithart();
-  procinit();
-  trapinit();
-  trapinithart();
-  plicinit();
-  plicinithart();
-  binit();
-  iinit();
-  fileinit();
-  virtio_disk_init();
-  userinit();
+    // Khoi tao tai nguyen dung chung.
+    kinit();
+    kvminit();
+    kvminithart();
+    procinit();
+    trapinit();
+    trapinithart();
+    plicinit();
+    plicinithart();
+    binit();
+    iinit();
+    fileinit();
+    virtio_disk_init();
+    userinit();
 
-  // Bao hieu khoi tao dung chung da hoan tat.
-  __atomic_store_n(&started, 1, __ATOMIC_RELEASE);
+    // Bao hieu khoi tao dung chung da hoan tat.
+    __atomic_store_n(&started, 1, __ATOMIC_RELEASE);
 
-  int boot_id = cpuid();
-  printk("boot hart %d initialized\n", boot_id);
+    int boot_id = cpuid();
+    printk("boot hart %d initialized\n", boot_id);
 
-  // Kiem tra OpenSBI co ho tro HSM khong.
-  if (!sbi_probe_extension(SBI_EXT_HSM)) {
-    printk("HSM extension is not supported\n");
-  } else {
-    for (int i = 0; i < NCPU; i++) {
-      if (i == boot_id)
-        continue;
+    // Kiem tra OpenSBI co ho tro HSM khong.
+    if (!sbi_probe_extension(SBI_EXT_HSM)) {
+      printk("HSM extension is not supported\n");
+    } else {
+      for (int i = 0; i < NCPU; i++) {
+        if (i == boot_id)
+          continue;
 
-      struct sbiret status = sbi_hart_get_status(i);
+        struct sbiret status = sbi_hart_get_status(i);
 
-      if (status.error != SBI_SUCCESS) {
-        printk("hart %d: get_status error %d\n", i, (int)status.error);
-        continue;
-      }
+        if (status.error != SBI_SUCCESS) {
+          printk("hart %d: get_status error %d\n", i, (int)status.error);
+          continue;
+        }
 
-      if (status.value == SBI_HSM_STATE_STARTED) {
-        printk("hart %d is already started\n", i);
-        continue;
-      }
+        if (status.value == SBI_HSM_STATE_STARTED) {
+          printk("hart %d is already started\n", i);
+          continue;
+        }
 
-      if (status.value != SBI_HSM_STATE_STOPPED) {
-        printk("hart %d is not stopped, state=%d\n", i, (int)status.value);
-        continue;
-      }
+        if (status.value != SBI_HSM_STATE_STOPPED) {
+          printk("hart %d is not stopped, state=%d\n", i, (int)status.value);
+          continue;
+        }
 
-      struct sbiret ret = sbi_hart_start(i, (uint64)_secondary_entry, 0);
+        struct sbiret ret = sbi_hart_start(i, (uint64)_secondary_entry, 0);
 
-      if (ret.error == SBI_SUCCESS) {
-        printk("hart %d start request succeeded\n", i);
-      } else if (ret.error == SBI_ERR_ALREADY_AVAILABLE ||
-                 ret.error == SBI_ERR_ALREADY_STARTED) {
-        printk("hart %d already available or started\n", i);
-      } else {
-        printk("hart %d start failed, error=%d\n", i, (int)ret.error);
+        if (ret.error == SBI_SUCCESS) {
+          printk("hart %d start request succeeded\n", i);
+        } else if (ret.error == SBI_ERR_ALREADY_AVAILABLE ||
+                   ret.error == SBI_ERR_ALREADY_STARTED) {
+          printk("hart %d already available or started\n", i);
+        } else {
+          printk("hart %d start failed, error=%d\n", i, (int)ret.error);
+        }
       }
     }
+  } else {
+    // Hart khac cho boot hart khoi tao tai nguyen dung chung.
+    while (__atomic_load_n(&started, __ATOMIC_ACQUIRE) == 0)
+      ;
+
+    printk("hart %d starting\n", cpuid());
+
+    // Khoi tao rieng cho hart nay.
+    kvminithart();
+    trapinithart();
+    plicinithart();
   }
 
   scheduler();
 }
 
-// Entry point cua hart phu.
 void
 secondary_start(uint64 hartid)
 {
