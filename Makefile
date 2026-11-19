@@ -210,3 +210,8 @@ test: $K/kernel
 	rm -f fs.img
 	$(MAKE) fs.img
 	python3 tests/run_tests.py
+
+test-full: $K/kernel
+	rm -f fs.img
+	$(MAKE) fs.img
+	python3 tests/run_tests.py --full
