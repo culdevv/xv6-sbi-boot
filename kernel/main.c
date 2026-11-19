@@ -63,6 +63,51 @@ extern void _secondary_entry(void);
 
 static volatile int started = 0;
 static volatile int boot_hart_done = 0;
+// Khoi dong cac hart phu bang SBI HSM.
+static void
+start_secondary_harts(void)
+{
+  int boot_id = cpuid();
+
+  // Kiem tra OpenSBI co ho tro HSM khong.
+  if (!sbi_probe_extension(SBI_EXT_HSM)) {
+    printk("HSM extension is not supported\n");
+    return;
+  }
+
+  for (int i = 0; i < NCPU; i++) {
+    if (i == boot_id)
+      continue;
+
+    struct sbiret status = sbi_hart_get_status(i);
+
+    if (status.error != SBI_SUCCESS) {
+      printk("hart %d: get_status error %d\n", i, (int)status.error);
+      continue;
+    }
+
+    if (status.value == SBI_HSM_STATE_STARTED) {
+      printk("hart %d is already started\n", i);
+      continue;
+    }
+
+    if (status.value != SBI_HSM_STATE_STOPPED) {
+      printk("hart %d is not stopped, state=%d\n", i, (int)status.value);
+      continue;
+    }
+
+    struct sbiret ret = sbi_hart_start(i, (uint64)_secondary_entry, 0);
+
+    if (ret.error == SBI_SUCCESS) {
+      printk("hart %d start request succeeded\n", i);
+    } else if (ret.error == SBI_ERR_ALREADY_AVAILABLE ||
+               ret.error == SBI_ERR_ALREADY_STARTED) {
+      printk("hart %d already available or started\n", i);
+    } else {
+      printk("hart %d start failed, error=%d\n", i, (int)ret.error);
+    }
+  }
+}
 
 // Boot hart: khoi tao tai nguyen dung chung va danh thuc cac hart phu.
 
@@ -96,46 +141,10 @@ main()
     // Bao hieu khoi tao dung chung da hoan tat.
     __atomic_store_n(&started, 1, __ATOMIC_RELEASE);
 
-    int boot_id = cpuid();
-    printk("boot hart %d initialized\n", boot_id);
+    printk("boot hart %d initialized\n", cpuid());
 
-    // Kiem tra OpenSBI co ho tro HSM khong.
-    if (!sbi_probe_extension(SBI_EXT_HSM)) {
-      printk("HSM extension is not supported\n");
-    } else {
-      for (int i = 0; i < NCPU; i++) {
-        if (i == boot_id)
-          continue;
-
-        struct sbiret status = sbi_hart_get_status(i);
-
-        if (status.error != SBI_SUCCESS) {
-          printk("hart %d: get_status error %d\n", i, (int)status.error);
-          continue;
-        }
-
-        if (status.value == SBI_HSM_STATE_STARTED) {
-          printk("hart %d is already started\n", i);
-          continue;
-        }
-
-        if (status.value != SBI_HSM_STATE_STOPPED) {
-          printk("hart %d is not stopped, state=%d\n", i, (int)status.value);
-          continue;
-        }
-
-        struct sbiret ret = sbi_hart_start(i, (uint64)_secondary_entry, 0);
-
-        if (ret.error == SBI_SUCCESS) {
-          printk("hart %d start request succeeded\n", i);
-        } else if (ret.error == SBI_ERR_ALREADY_AVAILABLE ||
-                   ret.error == SBI_ERR_ALREADY_STARTED) {
-          printk("hart %d already available or started\n", i);
-        } else {
-          printk("hart %d start failed, error=%d\n", i, (int)ret.error);
-        }
-      }
-    }
+    // Khoi dong cac hart phu.
+    start_secondary_harts();
   } else {
     // Hart khac cho boot hart khoi tao tai nguyen dung chung.
     while (__atomic_load_n(&started, __ATOMIC_ACQUIRE) == 0)
