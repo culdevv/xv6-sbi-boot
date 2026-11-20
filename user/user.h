@@ -26,6 +26,7 @@ int pause(int);
 int uptime(void);
 int sync(void);
 int halt(void);
+uint64 gettime(void);
 
 // ulib.c
 int stat(const char *, struct stat *);
