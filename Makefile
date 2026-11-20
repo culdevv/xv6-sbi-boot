@@ -153,7 +153,11 @@ UPROGS=\
 	$U/_dorphan\
 	$U/_sync\
 	$U/_rdtime_test\
-	$U/_ticks
+	$U/_ticks\
+	$U/_tickrate\
+	$U/_printtest\
+	$U/_spin
+	
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
 
