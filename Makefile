@@ -156,8 +156,9 @@ UPROGS=\
 	$U/_ticks\
 	$U/_tickrate\
 	$U/_printtest\
-	$U/_spin
-	
+	$U/_spin\
+	$U/_halt
+  
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
 
@@ -214,3 +215,8 @@ test: $K/kernel
 	rm -f fs.img
 	$(MAKE) fs.img
 	python3 tests/run_tests.py
+
+test-full: $K/kernel
+	rm -f fs.img
+	$(MAKE) fs.img
+	python3 tests/run_tests.py --full
