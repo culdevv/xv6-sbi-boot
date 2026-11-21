@@ -17,7 +17,6 @@
  * - Update kernel/kernel.ld load address to 0x80200000.
  * - Update entry.S to use the hart ID passed in a0.
  * - Update start.c for S-mode boot; remove M-mode initialization
- *   and mret transition.
  *
  * Do not test SBI calls with the old direct M-mode boot configuration.
  */
