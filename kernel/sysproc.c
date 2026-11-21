@@ -119,3 +119,9 @@ sys_halt(void)
   sbi_shutdown();
   return -1; // chỉ tới đây nếu SBI từ chối
 }
+
+uint64
+sys_gettime(void)
+{
+  return r_time();
+}
