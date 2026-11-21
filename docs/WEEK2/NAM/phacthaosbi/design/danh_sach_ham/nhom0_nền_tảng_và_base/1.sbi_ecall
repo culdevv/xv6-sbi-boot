@@ -1,0 +1,9 @@
+### sbi_ecall:  hàm cấp thấp, mọi hàm khác dựa vào 
+
+- Mục đích: Thực hiện ecall đúng quy ước, trả về cặp (lỗi, giá trị)
+- Tham số: eid (→ a7), fid (→ a6), a0 đến a2 (→ a0-a2), có thể mở rộng đến a5
+- Trả về: struct sbiret { long error; long value; } (error từ a0, value từ a1)
+- Lỗi có thể gặp: (mã và nguyên nhân)
+- Lưu ý: Phải khai báo a0/a1 là vừa vào vừa ra, và báo trình biên dịch rằng bộ nhớ có thể thay đổi
+- Đã đo thực tế: (kết quả bước 7, hoặc "chưa kiểm chứng")
+

@@ -1,0 +1,10 @@
+### sbi_get_impl_version()
+
+- Mục đích: Dùng in ra khi khởi động để ghi vào báo cáo.
+- Gọi SBI: EID = 0x10, FID = 2
+- Tham số:không
+- Trả về: 
+- Lỗi có thể gặp: 
+- Lưu ý: 
+- Đã đo thực tế: Đo được 0x10003 = OpenSBI 1.3
+

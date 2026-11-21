@@ -1,0 +1,7 @@
+### sbi_get_impl_id()
+
+- Mục đích: 
+- Gọi SBI: EID = 0x10, FID = 1
+- Tham số:không
+- Trả về: số nhận dạng bản cài đặt; 1 = OpenSBI
+- Đã đo thực tế: 1

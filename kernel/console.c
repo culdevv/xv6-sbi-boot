@@ -21,6 +21,7 @@
 #include "riscv.h"
 #include "defs.h"
 #include "proc.h"
+#include "sbi.h"
 
 #define BACKSPACE 0x100       // erase the last output character
 #define C(x)      ((x) - '@') // Control-x
@@ -35,7 +36,7 @@ void
 consputc(int c)
 {
   if (c == BACKSPACE) {
-    // if the user typed backspace, overwrite with a space.
+    // In đè khoảng trắng rồi lùi con trỏ lại khi nhấn Backspace.
     uartputc_sync('\b');
     uartputc_sync(' ');
     uartputc_sync('\b');

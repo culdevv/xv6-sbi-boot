@@ -1,0 +1,8 @@
+### sbi_get_spec_version
+
+- Mục đích: (một câu)
+- Dùng cho: R? / file xv6 nào gọi
+- Gọi SBI: EID 0x10, FID 0
+- Tham số:không tham số
+- Trả về: long: bit 30..24 = số chính, bit 23..0 = số phụ
+- Đã đo thực tế: Đo được 0x01000000 = bản đặc tả 1.0

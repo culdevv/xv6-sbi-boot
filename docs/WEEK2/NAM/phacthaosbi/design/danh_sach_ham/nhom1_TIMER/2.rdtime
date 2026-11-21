@@ -1,0 +1,2 @@
+Hàm đọc thời gian không phải hàm SBI: rdtime
+Mục đích: đọc thanh ghi time, kernel tự làm được; OpenSBI đã cho phép 

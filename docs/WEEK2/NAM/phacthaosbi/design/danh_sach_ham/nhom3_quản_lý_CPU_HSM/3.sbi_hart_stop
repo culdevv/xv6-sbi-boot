@@ -1,0 +1,6 @@
+### sbi_hart_stop()
+
+- Mục đích: 
+- Gọi SBI: EID 0x48534D, FID 1
+- Tham số:không
+- Trả về: CPU gọi sẽ tự dừng và không trở về nếu thành công

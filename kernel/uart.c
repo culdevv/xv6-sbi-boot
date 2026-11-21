@@ -10,6 +10,7 @@
 #include "sleeplock.h"
 #include "proc.h"
 #include "defs.h"
+#include "sbi.h" // [T4-B3] Khai bao thu vien SBI
 
 // the UART control registers are memory-mapped
 // at address UART0. this macro returns the
@@ -39,8 +40,8 @@
 #define LSR_TX_IDLE     (1 << 5) // THR can accept another character to send
 
 // for sending threads to serialize their writes
-static struct sleeplock tx_lock;
-static int tx_chan; // &tx_chan is the "wait channel"
+static struct sleeplock uart_tx_lock;
+// [T4-B3] Da xoa tx_chan vi khong con cho ngat TX phan cung
 
 extern volatile int panicking; // from printk.c
 extern volatile int panicked;  // from printk.c
@@ -67,38 +68,31 @@ uartinit(void)
   // reset and enable FIFOs.
   WriteReg(FCR, FCR_FIFO_ENABLE | FCR_FIFO_CLEAR);
 
-  // enable transmit and receive interrupts.
-  WriteReg(IER, IER_TX_ENABLE | IER_RX_ENABLE);
+  // [T4-B3] Chi bat ngat nhan (RX) cho ban phim, tat ngat truyen (TX)
+  WriteReg(IER, IER_RX_ENABLE);
 
-  initsleeplock(&tx_lock, "uart");
+  initsleeplock(&uart_tx_lock, "uart");
 }
 
-// transmit buf[] to the uart. it blocks if the
-// uart is busy, so it cannot be called from
-// interrupts, only from write() system calls.
+// transmit buf[] to the console via SBI.
 void
 uartwrite(char buf[], int n)
 {
-  acquiresleep(&tx_lock);
+  // acquiresleep(     // test 15-11
+  //   &uart_tx_lock); // [T4-B3] Giu khoa de cac tien trinh khong in de chu nhau
 
-  int i = 0;
-  while (i < n) {
-    sleep_prepare(&tx_chan);
-    if (ReadReg(LSR) & LSR_TX_IDLE) {
-      WriteReg(THR, buf[i]);
-      i += 1;
-    } else {
-      sleep();
-    }
+  for (int i = 0; i < n; i++) {
+    sbi_putchar(
+      buf
+        [i]); // [T4-B3] Gui tung byte qua OpenSBI thay vi ghi MMIO THR + sleep()
   }
 
-  releasesleep(&tx_lock);
+  // releasesleep(&uart_tx_lock); // test 15-11
 }
 
-// write a byte to the uart without using
+// write a byte to the console without using
 // interrupts, for use by kernel printk() and
-// to echo characters. it spins waiting for the uart's
-// output register to be empty.
+// to echo characters.
 void
 uartputc_sync(int c)
 {
@@ -110,10 +104,8 @@ uartputc_sync(int c)
       ;
   }
 
-  // wait for UART to set Transmit Holding Empty in LSR.
-  while ((ReadReg(LSR) & LSR_TX_IDLE) == 0)
-    ;
-  WriteReg(THR, c);
+  sbi_putchar(
+    c); // [T4-B3] Xuat dong bo qua OpenSBI thay vi doi LSR_TX_IDLE & ghi THR
 
   if (panicking == 0)
     pop_off();
@@ -132,18 +124,14 @@ uartgetc(void)
   }
 }
 
-// handle a uart interrupt, raised because input has
-// arrived, or the uart is ready for more output, or
-// both. called from devintr().
+// handle a uart interrupt, raised because input has arrived.
+// called from devintr().
 void
 uartintr(void)
 {
   ReadReg(ISR); // acknowledge the interrupt
 
-  if (ReadReg(LSR) & LSR_TX_IDLE) {
-    // UART finished transmitting; wake up sending thread.
-    wakeup(&tx_chan);
-  }
+  // [T4-B3] Da bo phan danh thuc tx_chan vi output khong dung ngat TX UART nua
 
   // read and process incoming characters, if any.
   while (1) {
