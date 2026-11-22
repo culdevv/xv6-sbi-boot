@@ -1,0 +1,116 @@
+Script started on 2026-11-22 01:15:23+07:00 [COMMAND="make qemu CPUS=2" TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="72" LINES="13"]
+qemu-system-riscv64 -machine virt -bios default -kernel kernel/kernel -m 128M -smp 2 -nographic -global virtio-mmio.force-legacy=false -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
+
+OpenSBI v1.8
+   ____                    _____ ____ _____
+  / __ \                  / ____|  _ \_   _|
+ | |  | |_ __   ___ _ __ | (___ | |_) || |
+ | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
+ | |__| | |_) |  __/ | | |____) | |_) || |_
+  \____/| .__/ \___|_| |_|_____/|____/_____|
+        | |
+        |_|
+
+Platform Name               : riscv-virtio,qemu
+Platform Features           : medeleg
+Platform HART Count         : 2
+Platform HART Protection    : pmp
+Platform IPI Device         : aclint-mswi
+Platform Timer Device       : aclint-mtimer @ 10000000Hz
+Platform Console Device     : uart8250
+Platform HSM Device         : ---
+Platform PMU Device         : ---
+Platform Reboot Device      : syscon-reboot
+Platform Shutdown Device    : syscon-poweroff
+Platform Suspend Device     : ---
+Platform CPPC Device        : ---
+Firmware Base               : 0x80000000
+Firmware Size               : 333 KB
+Firmware RW Offset          : 0x40000
+Firmware RW Size            : 77 KB
+Firmware Heap Offset        : 0x49000
+Firmware Heap Size          : 41 KB (total), 0 KB (reserved), 12 KB (used), 27 KB (free)
+Firmware Scratch Size       : 4096 B (total), 1464 B (used), 2632 B (free)
+Runtime SBI Version         : 3.0
+Standard SBI Extensions     : ipi,pmu,srst,sse,hsm,rfnc,fwft,time,base,legacy,dbcn,dbtr
+Experimental SBI Extensions : none
+
+Domain0 Name                : root
+Domain0 Boot HART           : 0
+Domain0 HARTs               : 0*,1*
+Domain0 Region00            : 0x0000000080040000-0x000000008005ffff M: (F,R,W) S/U: ()
+Domain0 Region01            : 0x0000000080000000-0x000000008003ffff M: (F,R,X) S/U: ()
+Domain0 Region02            : 0x0000000000100000-0x0000000000100fff M: (I,R,W) S/U: (R,W)
+Domain0 Region03            : 0x0000000010000000-0x0000000010000fff M: (I,R,W) S/U: (R,W)
+Domain0 Region04            : 0x0000000002000000-0x000000000200ffff M: (I,R,W) S/U: ()
+Domain0 Region05            : 0x000000000c400000-0x000000000c5fffff M: (I,R,W) S/U: (R,W)
+Domain0 Region06            : 0x000000000c000000-0x000000000c3fffff M: (I,R,W) S/U: (R,W)
+Domain0 Region07            : 0x0000000000000000-0xffffffffffffffff M: () S/U: (R,W,X)
+Domain0 Next Address        : 0x0000000080200000
+Domain0 Next Arg1           : 0x0000000087e00000
+Domain0 Next Mode           : S-mode
+Domain0 SysReset            : yes
+Domain0 SysSuspend          : yes
+
+Boot HART ID                : 0
+Boot HART Domain            : root
+Boot HART Priv Version      : v1.12
+Boot HART Base ISA          : rv64imafdch
+Boot HART ISA Extensions    : sstc,zicntr,zihpm,zicboz,zicbom,sdtrig,svadu
+Boot HART PMP Count         : 16
+Boot HART PMP Granularity   : 2 bits
+Boot HART PMP Address Bits  : 54
+Boot HART MHPM Info         : 16 (0x0007fff8)
+Boot HART Debug Triggers    : 2 triggers
+Boot HART MIDELEG           : 0x0000000000001666
+Boot HART MEDELEG           : 0x0000000000f4b509
+
+xv6 kernel is booting
+
+boot hart 0 initialized
+hart 0 starting
+hart 1 start request succeeded
+hart 2: get_status error -3
+hart 3: get_status error -3
+hart 4: get_status error -3
+hart 5: get_status error -3
+hart 6: get_status error -3
+hart 7: get_status error -3
+hart 1 starting
+init: starting sh
+$ ls
+.              1 1 1024
+..             1 1 1024
+README         2 2 171
+cat            2 3 36848
+echo           2 4 35712
+forktest       2 5 18288
+grep           2 6 44312
+init           2 7 36104
+kill           2 8 35640
+ln             2 9 35432
+ls             2 10 43000
+mkdir          2 11 35688
+rm             2 12 35680
+sh             2 13 58432
+stressfs       2 14 36552
+usertests      2 15 206936
+grind          2 16 51944
+wc             2 17 37856
+zombie         2 18 34976
+logstress      2 19 37688
+forphan        2 20 36472
+dorphan        2 21 35920
+sync           2 22 35072
+rdtime_test    2 23 36408
+ticks          2 24 35232
+halt           2 25 34984
+tickrate       2 26 36376
+printtest      2 27 35160
+spin           2 28 34656
+console        3 29 0
+$ ticks
+TICKS 50 70
+$ QEMU: Terminated
+
+Script done on 2026-11-22 01:15:36+07:00 [COMMAND_EXIT_CODE="0"]

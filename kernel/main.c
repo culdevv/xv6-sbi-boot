@@ -142,6 +142,7 @@ main()
     __atomic_store_n(&started, 1, __ATOMIC_RELEASE);
 
     printk("boot hart %d initialized\n", cpuid());
+    printk("hart %d starting\n", cpuid());
 
     // Khoi dong cac hart phu.
     start_secondary_harts();
