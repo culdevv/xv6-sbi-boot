@@ -1,0 +1,69 @@
+--- t_boot
+PASS: T01 boot banner (CPUS=1)
+PASS: T02 shell prompt (CPUS=1)
+PASS: T03 ls shows README (CPUS=1)
+FAIL: T04 timer ticks advance (CPUS=1)
+--- t_stress
+T15: running CPUS=8 for 20 iterations
+
+===== T15: CPUS=8, iteration 1/20 =====
+PASS: T15 iteration 1/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 2/20 =====
+PASS: T15 iteration 2/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 3/20 =====
+PASS: T15 iteration 3/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 4/20 =====
+PASS: T15 iteration 4/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 5/20 =====
+PASS: T15 iteration 5/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 6/20 =====
+PASS: T15 iteration 6/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 7/20 =====
+PASS: T15 iteration 7/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 8/20 =====
+PASS: T15 iteration 8/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 9/20 =====
+PASS: T15 iteration 9/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 10/20 =====
+PASS: T15 iteration 10/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 11/20 =====
+PASS: T15 iteration 11/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 12/20 =====
+PASS: T15 iteration 12/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 13/20 =====
+PASS: T15 iteration 13/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 14/20 =====
+PASS: T15 iteration 14/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 15/20 =====
+PASS: T15 iteration 15/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 16/20 =====
+PASS: T15 iteration 16/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 17/20 =====
+PASS: T15 iteration 17/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 18/20 =====
+PASS: T15 iteration 18/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 19/20 =====
+PASS: T15 iteration 19/20: CPUS=8, all harts online, shell prompt
+
+===== T15: CPUS=8, iteration 20/20 =====
+PASS: T15 iteration 20/20: CPUS=8, all harts online, shell prompt
+PASS: T15 stress boot summary: 20 iterations
+24/25 passed in 15s
