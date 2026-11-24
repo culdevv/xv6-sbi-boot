@@ -14,8 +14,7 @@ Lệnh kiểm tra:
   make fmt && git diff --exit-code
 
 Kết quả:
-- grep: không còn tham chiếu (docs/WEEK4/NAM/logs)
+- grep: không còn tham chiếu [xác nhận].
 - Build sạch, boot đến "$", ls/cat chạy đúng.
-- usertests -q: bị treo, không thể tiếp tục 
+- usertests -q: ALL TESTS PASSED
   thời gian do chưa có timer, không phải lỗi file/pipe.
-NOTE: cập nhật: sau khi có timer(Lực), cập nhật lại chương trình và đã chạy thành công usertests -q, đạt ALL TESTS PASSED
