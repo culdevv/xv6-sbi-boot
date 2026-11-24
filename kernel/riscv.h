@@ -1,7 +1,5 @@
 #ifndef __ASSEMBLER__
 
-
-
 // Supervisor Status Register, sstatus
 
 #define SSTATUS_SPP  (1L << 8) // Previous mode, 1=Supervisor, 0=User
@@ -76,7 +74,6 @@ w_sie(uint64 x)
   asm volatile("csrw sie, %0" : : "r"(x));
 }
 
-
 // supervisor exception program counter, holds the
 // instruction address to which a return from
 // exception will go.
@@ -93,7 +90,6 @@ r_sepc()
   asm volatile("csrr %0, sepc" : "=r"(x));
   return x;
 }
-
 
 // Supervisor Trap-Vector Base Address
 // low two bits are mode.
@@ -132,8 +128,6 @@ w_stimecmp(uint64 x)
 
 #define MENVCFG_STCE (1L << 63)
 #define MENVCFG_ADUE (1L << 61)
-
-
 
 // use riscv's sv39 page table scheme.
 #define SATP_SV39 (8L << 60)
