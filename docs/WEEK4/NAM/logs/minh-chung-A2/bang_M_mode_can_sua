@@ -1,0 +1,14 @@
+Vị trí						Làm gì						Kernel mới
+entry.S:14 csrr a1, mhartid			Lấy hartid, ghi đè a1				Xóa, dùng a0 do OpenSBI đưa
+start.c:18,21 r_mstatus/w_mstatus (MPP=S)	Đặt chế độ trả về của mret			Xóa
+start.c:25 w_mepc(main)				Địa chỉ nhảy của mret				Xóa, gọi main() trực tiếp
+start.c:31-32 medeleg, mideleg			Ủy quyền trap xuống S				Xóa
+start.c:37-38 pmpaddr0, pmpcfg0			Cấp quyền truy cập RAM				Xóa
+start.c:41 menvcfg | MENVCFG_ADUE		Bật Svadu (phần cứng tự cập nhật bit A/D)	Xóa, xem lưu ý 3
+start.c:47 id = r_mhartid()			Lấy hartid để ghi tp				Thay bằng tham số hartid
+start.c:51 mret					Xuống S-mode					Xóa
+start.c:58-62 menvcfg | STCE, mcounteren	Bật sstc, cho S đọc time			Xóa, OpenSBI làm
+start.c:65 w_stimecmp(...)			Hẹn tick đầu tiên				Xóa, B2 thay bằng sbi_set_timer trong trapinithart
+trap.c:181 w_stimecmp(...)			Hẹn lại tick trong clockintr			Chưa sửa bây giờ
+riscv.h (các dòng 5 đến 205)			Định nghĩa r_m*/w_m*				Giữ, chỉ cần không ai gọi
+sbi.c:20					Chỉ là comment có chữ mret			Bỏ qua
