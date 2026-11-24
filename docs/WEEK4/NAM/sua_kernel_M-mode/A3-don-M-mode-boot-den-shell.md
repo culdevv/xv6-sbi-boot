@@ -16,5 +16,5 @@ Lệnh kiểm tra:
 Kết quả:
 - grep: không còn tham chiếu [xác nhận].
 - Build sạch, boot đến "$", ls/cat chạy đúng.
-- usertests -q: [N/M test qua]; lỗi còn lại [liệt kê] đều liên quan
+- usertests -q: ALL TESTS PASSED
   thời gian do chưa có timer, không phải lỗi file/pipe.
