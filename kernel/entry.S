@@ -2,8 +2,8 @@
         # and causes each hart (i.e. CPU) to jump there.
         # kernel.ld causes the following code to
         # be placed at 0x80200000.
-.section .text
-.global _entry
+        .section .text
+        .global _entry
 _entry:
         # OpenSBI: a0 = hartid, a1 = dtb. Chỉ dùng t0..t1, giữ nguyên a0/a1.
         li   t0, 8                  # NCPU
