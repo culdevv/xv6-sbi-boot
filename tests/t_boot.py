@@ -56,7 +56,7 @@ def test_basic(cpus):
         check(f"T03 ls shows README (CPUS={cpus})", q.expect(r"README", 10))
         q.expect(r"\$ ", 10)
         q.send("ticks\n")
-        m = q.expect(r"TICKS (\d+) (\d+)", 20)
+        m = q.expect(r"TICKS (\d+) (\d+)\r?\n", 20)
         ok = bool(m) and 20 <= int(m.group(2)) - int(m.group(1)) <= 22
         check(f"T04 timer ticks advance (CPUS={cpus})", ok)
     finally:
