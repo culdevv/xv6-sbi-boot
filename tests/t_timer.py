@@ -6,13 +6,13 @@ def run():
     try:
         q.expect(r"\$ ", 60)
         q.send("ticks\n")
-        m = q.expect(r"TICKS (\d+) (\d+)", 30)
+        m = q.expect(r"TICKS (\d+) (\d+)\r?\n", 30)
         ok = bool(m) and 20 <= int(m.group(2)) - int(m.group(1)) <= 22
         check("T11 ticks advance by sleep(20)", ok)
 
         q.expect(r"\$ ", 10)
         q.send("tickrate\n")
-        m = q.expect(r"TICKRATE_MILLIHZ (-?\d+) ticks=(\d+)", 40)
+        m = q.expect(r"TICKRATE_MILLIHZ (-?\d+) ticks=(\d+)\r?\n", 40)
         rate = int(m.group(1)) if m else 0
         if m:
             print(f"  measured rate = {rate / 1000:.3f} Hz (nominal 10)")
