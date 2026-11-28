@@ -1,0 +1,251 @@
+diff --git a/.vscode/c_cpp_properties.json b/.vscode/c_cpp_properties.json
+new file mode 100644
+index 0000000..c2098a2
+--- /dev/null
++++ b/.vscode/c_cpp_properties.json
+@@ -0,0 +1,18 @@
++{
++  "configurations": [
++    {
++      "name": "linux-gcc-x64",
++      "includePath": [
++        "${workspaceFolder}/**"
++      ],
++      "compilerPath": "/usr/bin/gcc",
++      "cStandard": "${default}",
++      "cppStandard": "${default}",
++      "intelliSenseMode": "linux-gcc-x64",
++      "compilerArgs": [
++        ""
++      ]
++    }
++  ],
++  "version": 4
++}
+\ No newline at end of file
+diff --git a/.vscode/launch.json b/.vscode/launch.json
+new file mode 100644
+index 0000000..9b22322
+--- /dev/null
++++ b/.vscode/launch.json
+@@ -0,0 +1,24 @@
++{
++  "version": "0.2.0",
++  "configurations": [
++    {
++      "name": "C/C++ Runner: Debug Session",
++      "type": "cppdbg",
++      "request": "launch",
++      "args": [],
++      "stopAtEntry": false,
++      "externalConsole": false,
++      "cwd": "/home/vudinhluc_20233513/OS/xv6-stock/kernel",
++      "program": "/home/vudinhluc_20233513/OS/xv6-stock/kernel/build/Debug/outDebug",
++      "MIMode": "gdb",
++      "miDebuggerPath": "gdb",
++      "setupCommands": [
++        {
++          "description": "Enable pretty-printing for gdb",
++          "text": "-enable-pretty-printing",
++          "ignoreFailures": true
++        }
++      ]
++    }
++  ]
++}
+\ No newline at end of file
+diff --git a/.vscode/settings.json b/.vscode/settings.json
+new file mode 100644
+index 0000000..bb879da
+--- /dev/null
++++ b/.vscode/settings.json
+@@ -0,0 +1,59 @@
++{
++  "C_Cpp_Runner.cCompilerPath": "gcc",
++  "C_Cpp_Runner.cppCompilerPath": "g++",
++  "C_Cpp_Runner.debuggerPath": "gdb",
++  "C_Cpp_Runner.cStandard": "",
++  "C_Cpp_Runner.cppStandard": "",
++  "C_Cpp_Runner.msvcBatchPath": "C:/Program Files/Microsoft Visual Studio/VR_NR/Community/VC/Auxiliary/Build/vcvarsall.bat",
++  "C_Cpp_Runner.useMsvc": false,
++  "C_Cpp_Runner.warnings": [
++    "-Wall",
++    "-Wextra",
++    "-Wpedantic",
++    "-Wshadow",
++    "-Wformat=2",
++    "-Wcast-align",
++    "-Wconversion",
++    "-Wsign-conversion",
++    "-Wnull-dereference"
++  ],
++  "C_Cpp_Runner.msvcWarnings": [
++    "/W4",
++    "/permissive-",
++    "/w14242",
++    "/w14287",
++    "/w14296",
++    "/w14311",
++    "/w14826",
++    "/w44062",
++    "/w44242",
++    "/w14905",
++    "/w14906",
++    "/w14263",
++    "/w44265",
++    "/w14928"
++  ],
++  "C_Cpp_Runner.enableWarnings": true,
++  "C_Cpp_Runner.warningsAsError": false,
++  "C_Cpp_Runner.compilerArgs": [],
++  "C_Cpp_Runner.linkerArgs": [],
++  "C_Cpp_Runner.includePaths": [],
++  "C_Cpp_Runner.includeSearch": [
++    "*",
++    "**/*"
++  ],
++  "C_Cpp_Runner.excludeSearch": [
++    "**/build",
++    "**/build/**",
++    "**/.*",
++    "**/.*/**",
++    "**/.vscode",
++    "**/.vscode/**"
++  ],
++  "C_Cpp_Runner.useAddressSanitizer": false,
++  "C_Cpp_Runner.useUndefinedSanitizer": false,
++  "C_Cpp_Runner.useLeakSanitizer": false,
++  "C_Cpp_Runner.showCompilationTime": false,
++  "C_Cpp_Runner.useLinkTimeOptimization": false,
++  "C_Cpp_Runner.msvcSecureNoWarnings": false
++}
+\ No newline at end of file
+diff --git a/Makefile b/Makefile
+index a26f3db..8b7a75a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -151,6 +151,8 @@ UPROGS=\
+ 	$U/_forphan\
+ 	$U/_dorphan\
+ 	$U/_sync\
++	$U/_tickrate\
++	$U/_ticks\
+ 
+ fs.img: mkfs/mkfs README $(UPROGS)
+ 	mkfs/mkfs fs.img README $(UPROGS)
+diff --git a/kernel/syscall.c b/kernel/syscall.c
+index 1800f20..0642f27 100644
+--- a/kernel/syscall.c
++++ b/kernel/syscall.c
+@@ -103,6 +103,7 @@ extern uint64 sys_link(void);
+ extern uint64 sys_mkdir(void);
+ extern uint64 sys_close(void);
+ extern uint64 sys_sync(void);
++extern uint64 sys_gettime(void);
+ 
+ // An array mapping syscall numbers from syscall.h
+ // to the function that handles the system call.
+@@ -130,6 +131,7 @@ static uint64 (*syscalls[])(void) = {
+   [SYS_mkdir]   = sys_mkdir,
+   [SYS_close]   = sys_close,
+   [SYS_sync]    = sys_sync,
++  [SYS_gettime] sys_gettime
+   // clang-format on
+ };
+ 
+diff --git a/kernel/syscall.h b/kernel/syscall.h
+index 5a4a39f..fa1f357 100644
+--- a/kernel/syscall.h
++++ b/kernel/syscall.h
+@@ -21,3 +21,4 @@
+ #define SYS_mkdir  20
+ #define SYS_close  21
+ #define SYS_sync   22
++#define SYS_gettime 23
+diff --git a/kernel/sysproc.c b/kernel/sysproc.c
+index cd25557..98593ed 100644
+--- a/kernel/sysproc.c
++++ b/kernel/sysproc.c
+@@ -110,3 +110,9 @@ sys_uptime(void)
+   release(&tickslock);
+   return xticks;
+ }
++
++uint64
++sys_gettime(void)
++{
++  return r_time(); // nếu riscv.h gốc chưa có r_time(), đọc CSR time bằng asm volatile("csrr %0, time" : "=r"(x))
++}
+diff --git a/user/tickrate.c b/user/tickrate.c
+new file mode 100644
+index 0000000..fd96727
+--- /dev/null
++++ b/user/tickrate.c
+@@ -0,0 +1,26 @@
++#include "kernel/types.h"
++#include "user/user.h"
++
++#define TIMEBASE 10000000UL // QEMU virt: 10 MHz
++
++int
++main(int argc, char *argv[])
++{
++  int n = 30;
++  if (argc > 1)
++    n = atoi(argv[1]);
++
++  int t = uptime();
++  while (uptime() == t) // đợi đến cạnh của tick
++    ;
++  uint64 t0 = gettime();
++  int a = uptime();
++  pause(n);
++  int b = uptime();
++  uint64 t1 = gettime();
++
++  uint64 dt = t1 - t0;
++  int milli = (int)((uint64)(b - a) * 1000UL * TIMEBASE / dt);
++  printf("TICKRATE_MILLIHZ %d ticks=%d\n", milli, b - a);
++  exit(0);
++}
+\ No newline at end of file
+diff --git a/user/ticks.c b/user/ticks.c
+new file mode 100644
+index 0000000..a32a4f7
+--- /dev/null
++++ b/user/ticks.c
+@@ -0,0 +1,13 @@
++
++
++#include "kernel/types.h"
++#include "user/user.h"
++int
++main(void)
++{
++  int a = uptime();
++  pause(20);
++  int b = uptime();
++  printf("TICKS %d %d\n", a, b);
++  exit(0);
++}
+diff --git a/user/user.h b/user/user.h
+index 29aad59..87a56e7 100644
+--- a/user/user.h
++++ b/user/user.h
+@@ -25,6 +25,7 @@ char *sys_sbrk(int, int);
+ int pause(int);
+ int uptime(void);
+ int sync(void);
++int gettime(void);
+ 
+ // ulib.c
+ int stat(const char *, struct stat *);
+diff --git a/user/usys.pl b/user/usys.pl
+index 4d054e8..3aafb78 100755
+--- a/user/usys.pl
++++ b/user/usys.pl
+@@ -43,3 +43,4 @@ entry("sbrk");
+ entry("pause");
+ entry("uptime");
+ entry("sync");
++entry("gettime");
